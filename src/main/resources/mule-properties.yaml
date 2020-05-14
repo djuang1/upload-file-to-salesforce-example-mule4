@@ -1,0 +1,7 @@
+file:
+  base: "/Users/dejim.juang/Workspaces/seven-five/upload-file-to-salesforce-example-mule4/"
+sfdc:
+  object_id: "0033m00002PCN7MAAX"
+  username: "![zF3j42h8Z8tIRJR5vUr9ay5obFOF1DBPC4MvS2YILT4=]"
+  password: "![jlTDjGA8VOZXKxKhowG38A==]"
+  token: "![R5tqYoro2xseB685+2vXQiRecxHeiq6DXiXN2VVmOig=]"
