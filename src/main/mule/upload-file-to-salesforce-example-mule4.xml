@@ -10,15 +10,10 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
 http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd">
 
-<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="fede5b59-2a45-45d2-a1c4-22b3b30bfe1a" >
-		<http:listener-connection host="0.0.0.0" port="8081" />
-	</http:listener-config>
-	
 	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="cfd4d02d-337f-4815-b15e-049d870c2957" file="mule-properties.yaml" key="${mule.key}" />
 	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="bb8b5e77-f41b-4eda-bd79-693531aa7606" >
 		<salesforce:basic-connection username="${secure::sfdc.username}" password="${secure::sfdc.password}" securityToken="${secure::sfdc.token}" />
 	</salesforce:sfdc-config>
-	
 	
 	<flow name="upload-file-to-salesforce-example-mule4Flow1" doc:id="b496f972-b640-4d17-b305-517bf28216e3" >
 		<file:listener doc:name="On New or Updated File" doc:id="c72d4eb4-af50-4b72-a558-ad16bb36c071" directory="/Users/dejim.juang/Workspaces/seven-five/upload-file-to-salesforce-example-mule4/src/main/resources/in" moveToDirectory="/Users/dejim.juang/Workspaces/seven-five/upload-file-to-salesforce-example-mule4/src/main/resources/out">
@@ -26,7 +21,7 @@ http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/fil
 				<fixed-frequency frequency="30" timeUnit="SECONDS"/>
 			</scheduling-strategy>
 		</file:listener>
-		<ee:transform doc:name="Transform Message" doc:id="1a737e5b-b85b-4810-8ea8-42a14de50228" >
+		<ee:transform doc:name="Map File to ContentVersion Object" doc:id="1a737e5b-b85b-4810-8ea8-42a14de50228" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 import * from dw::core::Binaries
@@ -49,7 +44,7 @@ output application/java
 	"cvId" : payload.items[0].id
 }]]]></salesforce:parameters>
 		</salesforce:query>
-		<ee:transform doc:name="Transform Message" doc:id="07190465-f65b-4ec8-b47d-a164fc31a489" >
+		<ee:transform doc:name="Map Document Link" doc:id="07190465-f65b-4ec8-b47d-a164fc31a489" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/java
@@ -61,15 +56,7 @@ payload map ( payload01 , indexOfPayload01 ) -> {
 			</ee:message>
 		</ee:transform>
 		<salesforce:upsert objectType="ContentDocumentLink" externalIdFieldName="Id" doc:name="Create Content Document Link" doc:id="8329d7e4-c4d9-4dd4-b6d5-317fcbf5944e" config-ref="Salesforce_Config"/>
-		<ee:transform doc:name="Transform Message" doc:id="7d0c30da-0e89-47a4-a737-448478f9b89d" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-payload]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="0967f5bb-64fa-4ea4-91e4-b53d8177e897" message="#[payload]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="d5de90c7-c11f-4611-b542-9a5287d81820" message="#[output application/json --- payload]"/>
 	</flow>
 
 </mule>
